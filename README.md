@@ -13,7 +13,9 @@ cources
 ## Usage
 
 Just execute it:
+'''
     $ codebreaker
+'''
 
 
 ## Contributing
