@@ -3,13 +3,13 @@ module Codebreaker
     def self.get level
       case level
       when 'Easy'
-        20
+        { attempts: 20, hints: 2 }
       when 'Medium'
-        15
+        { attempts: 15, hints: 1 } 
       when 'Hard'
-        10
+        { attempts: 10, hints: 1 }
       when 'Impossible'
-        1
+        { attempts:  1, hints: 0 }
       else
         raise ArgumentError, "wrong level #{level}"
       end
