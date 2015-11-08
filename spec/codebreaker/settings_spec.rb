@@ -8,19 +8,20 @@ module Codebreaker
       Hints =     [   2,    1,    1,      0     ]
 
       Levels.each_with_index do |level, i|
-        it "takes \"#{ level }\" string as difficulty level" do
-          expect { Settings.get level }.to_not raise_error
-        end
+        context "when takes  \"#{ level }\" string as difficulty level" do
+          it "do not rise error" do
+            expect { Settings.get level }.to_not raise_error
+          end
 
-        it "returns #{ Attempts[i] } attempts when \"#{ level }\" level given" do
-          expect(Settings.get(level)[:attempts]).to eq(Attempts[i])
-        end
+          it "returns #{ Attempts[i] } attempts when \"#{ level }\" level given" do
+            expect(Settings.get(level)[:attempts]).to eq(Attempts[i])
+          end
 
-        it "returns #{ Hints[i] } hints when \"#{ level }\" level given" do
-          expect(Settings.get(level)[:hints]).to eq(Hints[i])
+          it "returns #{ Hints[i] } hints when \"#{ level }\" level given" do
+            expect(Settings.get(level)[:hints]).to eq(Hints[i])
+          end
         end
-
-     end
+      end
  
       it "raises an ArgumentError when no argument given" do
         expect { Settings.get }.to raise_exception ArgumentError
