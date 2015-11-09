@@ -141,6 +141,5 @@ module Codebreaker
         end
       end
     end
-
   end
 end

@@ -5,7 +5,7 @@ require 'byebug'
 
 require 'rspec'
 require 'bundler/setup'
-require 'codebreaker'
+require 'rg_codebreaker'
 
 RSpec.configure do |config|
 #  config.filter_run_excluding statistic_test: true

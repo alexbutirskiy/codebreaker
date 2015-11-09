@@ -19,7 +19,7 @@ module Codebreaker
     def guess input
       @attempts_left -= 1 unless @attempts_left == 0
       check_input input
-      secret_copy = @secret
+      secret_copy = @secret.dup
       response = ""
       4.times do |i|
         if input[i] == secret_copy[i]

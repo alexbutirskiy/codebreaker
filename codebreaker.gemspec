@@ -4,12 +4,12 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'codebreaker/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "codebreaker"
+  spec.name          = "rg_codebreaker"
   spec.version       = Codebreaker::VERSION
   spec.authors       = ["Alex Butirskiy"]
   spec.email         = ["butirskiy@gmail.com"]
 
-  spec.summary       = %q{Codebreaker is a simple console game}
+  spec.summary       = %q{This gem implements backend for Codebreaker game}
   spec.homepage      = "https://github.com/alexbutirskiy/codebreaker"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
