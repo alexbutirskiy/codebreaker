@@ -100,14 +100,45 @@ module Codebreaker
     end
 
     describe "#hint" do
-      context "when there is some hints available" do
-        it "returns string with one secret digit showed"
-        it "returns secret digit on random position"
-        it "decreases internal hint counter by one"
+      before(:each) do
+        secret = double('Secret instance', get: "1234")
+        allow(Secret).to receive(:new).and_return(secret)
+        (@game = Game.new).start("Easy")
       end
 
-      context "when there is no hints available" do
-        it "returns 'No hints available' "
+      context "when there is some hints available" do
+        it "returns string with one digit showed (ex. '_2__')" do
+          hint_str = @game.hint
+          expect(hint_str.size).to eq 4
+          expect(hint_str.count('_')).to eq 3
+          expect(hint_str).to match(/[1-6]/)
+        end
+
+        it "returns proper digit from secret code" do
+          hint_str = @game.hint
+          index = hint_str.index(hint_str.match(/[1-6]/).to_s)
+          expect(hint_str[index]).to eq SECRET[index]
+        end
+
+        it "returns secret digit on random position" do
+          hints = []
+          10.times do
+            @game.start
+            hints << @game.hint
+          end
+          expect(hints.uniq.size).to_not eq 1
+        end
+
+        it "decreases internal hint counter by one" do
+          expect{ @game.hint }.to change{ @game.hints_left }.by(-1)
+        end
+      end
+
+      context "when there is no hints available", if: !@hint_failed do
+        it "returns '____' " do
+          4.times { @game.hint }
+          expect(@game.hint).to eq '___'
+        end
       end
     end
 

@@ -32,6 +32,15 @@ module Codebreaker
       response += '-' * input.count('-')
     end
 
+    def hint
+      return '___' if @hints_left == 0
+      @hints_left -= 1
+      result = '_' * 4
+      index = rand(4)
+      result[index] = @secret[index]
+      result
+    end
+
     private
 
     def check_input s
