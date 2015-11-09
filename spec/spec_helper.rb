@@ -6,5 +6,5 @@ require 'bundler/setup'
 require 'codebreaker'
 
 RSpec.configure do |config|
-  config.filter_run_excluding statistic_test: true
+#  config.filter_run_excluding statistic_test: true
 end

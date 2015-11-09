@@ -2,16 +2,57 @@ require 'spec_helper'
  
 module Codebreaker
   describe Game do
-    describe "#start" do
-      let(:game) { Game.new }
-      before { game.start }
+    let(:game) { Game.new }
 
-      it "saves secret code" do
-        expect(game.send :secret).not_to be_empty
+    describe "::new", receive: true do
+      it "creates new Random Number Generator" do
+        expect(Secret).to receive(:new)
+        Game.new
       end
-      it "saves 4 numbers secret code"
-      it "generates enough random secret code"
-      it "saves secret code with numbers from 1 to 6"
+    end
+
+    describe "#start", receive: true do
+
+      it "takes a string as difficulty level" do
+        game.start("Easy")
+        expect(game.difficulty).to eq "Easy"
+        game.start("Hard")
+        expect(game.difficulty).to eq "Hard"
+      end
+      context "when no parametres provided" do
+        it "sets difficulty level to 'Medium' at first start" do
+          game.start
+          expect(game.difficulty).to eq "Medium"
+        end
+
+        it "keeps difficulty level from previous game st further starts" do
+          game.start "Hard"
+          game.start
+          expect(game.difficulty).to eq "Hard"
+        end
+      end
+
+      it "gets new secret code from Random Number Generator" do
+        secret = double('Secret instance', get: "1234")
+        allow(Secret).to receive(:new).and_return(secret)
+        expect(secret).to receive(:get)
+        game.start
+      end
+
+    end
+
+    describe "#attempts_left" do
+      it "returns number of attempts to lose the game" do
+        game.start
+        expect(game.attempts_left).to be_a Fixnum
+      end
+    end
+
+    describe "#hints_left" do
+      it "returns number of hints to be asked by player" do
+        game.start
+        expect(game.hints_left).to be_a Fixnum
+      end
     end
 
     describe "#guess" do
@@ -28,7 +69,7 @@ module Codebreaker
         it "'+' string when one number and  position was guessed"
         it "'++' string when two number and  position was guessed"
         it "'-' string when one number was guessed but not possition"
-        it ".'--' string when two number was guessed but not possition"
+        it "'--' string when two number was guessed but not possition"
       end
     end
 
@@ -43,5 +84,6 @@ module Codebreaker
         it "returns 'No hints available' "
       end
     end
+
   end
 end

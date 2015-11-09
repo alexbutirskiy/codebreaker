@@ -1,4 +1,4 @@
-  # Settings returns game parametres which are dependent on dificalty level
+  # Settings returns game parametres which are dependent on difficulty level
 module Codebreaker
   class Settings
     def self.get level
