@@ -23,7 +23,7 @@ module Codebreaker
           secret = Secret.new
           4.times do |digit|
             it "for digit #{digit}" do
-              data = collect_data(100000) { secret.get[digit] }
+              data = collect_data(100_000) { secret.get[digit] }
               expect(data.mean).to be_within(0.1).of(3.5)
             end
           end

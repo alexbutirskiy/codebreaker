@@ -13,12 +13,15 @@ module Codebreaker
       @secret = @rng.get
       @attempts_left = Settings::get(@difficulty)[:attempts]
       @hints_left = Settings::get(@difficulty)[:hints]
+      @win = @lose = false
       'Ok'
     end
 
     def guess input
+      return 'Game Over' if win? | lose?
       @attempts_left -= 1 unless @attempts_left == 0
       check_input input
+      input = input.dup
       secret_copy = @secret.dup
       response = ""
       4.times do |i|
@@ -30,6 +33,9 @@ module Codebreaker
       end
       secret_copy.each_char { |number| input.sub!(number, '-') }
       response += '-' * input.count('-')
+      @win = true if response.count('+') == @secret.size
+      @lose = true if !win? && @attempts_left == 0
+      response
     end
 
     def hint
@@ -39,6 +45,14 @@ module Codebreaker
       index = rand(4)
       result[index] = @secret[index]
       result
+    end
+
+    def win?
+      @win || false
+    end
+
+    def lose?
+      @lose || false
     end
 
     private

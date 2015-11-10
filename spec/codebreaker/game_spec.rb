@@ -20,6 +20,7 @@ module Codebreaker
         game.start("Hard")
         expect(game.difficulty).to eq "Hard"
       end
+      
       context "when no parametres provided" do
         it "sets difficulty level to 'Medium' at first start" do
           game.start
@@ -93,8 +94,19 @@ module Codebreaker
           "2524" => "+-"
         }.each do |inp, outp|
           it "\"#{outp}\" when \"#{inp}\" is given and secret == \"#{SECRET}\"" do
-            expect(@game.guess(inp.dup)).to eq outp
+            expect(@game.guess(inp)).to eq outp
           end
+        end
+      end
+
+      context 'when game is over' do
+        it 'returns "Game Over" if player won' do
+          @game.guess('1234')
+          expect(@game.guess('1111')).to eq 'Game Over'
+        end
+        it 'returns "Game Over" if player lost' do
+          @game.attempts_left.times { @game.guess('1111') }
+          expect(@game.guess('1111')).to eq 'Game Over'
         end
       end
     end
@@ -139,6 +151,41 @@ module Codebreaker
           4.times { @game.hint }
           expect(@game.hint).to eq '___'
         end
+      end
+    end
+
+    describe '#win?' do
+      before(:each) do
+        secret = double('Secret instance', get: "1234")
+        allow(Secret).to receive(:new).and_return(secret)
+        (@game = Game.new).start("Easy")
+      end
+
+      it "returns true if secret has been guessed " do
+        @game.guess('1234')
+        expect(@game).to be_win
+      end
+      it "returns false at other cases " do
+        expect(@game).to_not be_win
+        @game.attempts_left.times { @game.guess('1111') }
+        expect(@game).to_not be_win
+      end
+    end
+
+    describe '#lose?' do
+      before(:each) do
+        secret = double('Secret instance', get: "1234")
+        allow(Secret).to receive(:new).and_return(secret)
+        (@game = Game.new).start("Easy")
+      end
+      it "returns true if secret has not guessed and no attempts available" do
+        @game.attempts_left.times { @game.guess('1111') }
+        expect(@game).to be_lose
+      end
+      it "returns false at other cases " do
+        @game.guess '1234'
+        @game.attempts_left.times { @game.guess('1111') }
+        expect(@game).to_not be_lose
       end
     end
   end
