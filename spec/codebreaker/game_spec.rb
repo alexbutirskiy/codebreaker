@@ -1,6 +1,14 @@
 require 'spec_helper'
  
 module Codebreaker
+  shared_context "predefined games" do
+    before(:each) do
+      secret = double('Secret instance', get: "1234")
+      allow(Secret).to receive(:new).and_return(secret)
+      (@game = Game.new).start
+    end
+  end
+
   describe Game do
     SECRET = "1234"
     let(:game) { Game.new }
@@ -58,11 +66,7 @@ module Codebreaker
     end
 
     describe "#guess" do
-      before(:each) do
-        secret = double('Secret instance', get: "1234")
-        allow(Secret).to receive(:new).and_return(secret)
-        (@game = Game.new).start
-      end
+      include_context "predefined games"
 
       it "decreases attempts_left counter by 1" do
         expect{ @game.guess("1234") }.to change{ @game.attempts_left }.by(-1)
@@ -104,6 +108,7 @@ module Codebreaker
           @game.guess('1234')
           expect(@game.guess('1111')).to eq 'Game Over'
         end
+
         it 'returns "Game Over" if player lost' do
           @game.attempts_left.times { @game.guess('1111') }
           expect(@game.guess('1111')).to eq 'Game Over'
@@ -112,11 +117,7 @@ module Codebreaker
     end
 
     describe "#hint" do
-      before(:each) do
-        secret = double('Secret instance', get: "1234")
-        allow(Secret).to receive(:new).and_return(secret)
-        (@game = Game.new).start("Easy")
-      end
+      include_context "predefined games"
 
       context "when there is some hints available" do
         it "returns string with one digit showed (ex. '_2__')" do
@@ -155,16 +156,13 @@ module Codebreaker
     end
 
     describe '#win?' do
-      before(:each) do
-        secret = double('Secret instance', get: "1234")
-        allow(Secret).to receive(:new).and_return(secret)
-        (@game = Game.new).start("Easy")
-      end
+      include_context "predefined games"
 
       it "returns true if secret has been guessed " do
         @game.guess('1234')
         expect(@game).to be_win
       end
+
       it "returns false at other cases " do
         expect(@game).to_not be_win
         @game.attempts_left.times { @game.guess('1111') }
@@ -173,15 +171,13 @@ module Codebreaker
     end
 
     describe '#lose?' do
-      before(:each) do
-        secret = double('Secret instance', get: "1234")
-        allow(Secret).to receive(:new).and_return(secret)
-        (@game = Game.new).start("Easy")
-      end
+      include_context "predefined games"
+
       it "returns true if secret has not guessed and no attempts available" do
         @game.attempts_left.times { @game.guess('1111') }
         expect(@game).to be_lose
       end
+      
       it "returns false at other cases " do
         @game.guess '1234'
         @game.attempts_left.times { @game.guess('1111') }
