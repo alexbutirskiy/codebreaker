@@ -1,5 +1,6 @@
 require_relative 'secret'
 require_relative 'settings'
+require_relative 'saver'
 module Codebreaker
   class Game
     attr_reader :difficulty, :attempts_left, :hints_left
