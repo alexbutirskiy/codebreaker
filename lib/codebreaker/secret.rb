@@ -6,7 +6,7 @@ module Codebreaker
     end
 
     def get
-      @size.times.inject("") { |s| s += (@prng.rand(6)+1).to_s }
+      @size.times.inject('') { |s| s += (@prng.rand(1..6)).to_s }
     end
   end
 end

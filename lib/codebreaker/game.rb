@@ -8,29 +8,28 @@ module Codebreaker
     def initialize
       @rng = Secret.new
     end
- 
-    def start difficulty = nil
-      @difficulty = difficulty || @difficulty || "Medium"
+
+    def start(difficulty = nil)
+      @difficulty = difficulty || @difficulty || 'Medium'
       @secret = @rng.get
-      @attempts_left = Settings::get(@difficulty)[:attempts]
-      @hints_left = Settings::get(@difficulty)[:hints]
+      @attempts_left = Settings.get(@difficulty)[:attempts]
+      @hints_left = Settings.get(@difficulty)[:hints]
       @win = @lose = false
       'Ok'
     end
 
-    def guess input
+    def guess(arg)
       return 'Game Over' if win? | lose?
       @attempts_left -= 1 unless @attempts_left == 0
-      check_input input
-      input = input.dup
+      check_input arg
+      input = arg.dup
       secret_copy = @secret.dup
-      response = ""
+      response = ''
       4.times do |i|
-        if input[i] == secret_copy[i]
-          response += '+'
-          input[i] = '+'
-          secret_copy[i] = ' '
-        end
+        next if input[i] != secret_copy[i]
+        response += '+'
+        input[i] = '+'
+        secret_copy[i] = ' '
       end
       secret_copy.each_char { |number| input.sub!(number, '-') }
       response += '-' * input.count('-')
@@ -58,7 +57,7 @@ module Codebreaker
 
     private
 
-    def check_input s
+    def check_input(s)
       raise ArgumentError, "wrong input \"#{s}\"" unless s.match(/^[1-6]+$/)
       raise ArgumentError, "wrong input size \"#{s}\"" if s.size != 4
     end

@@ -1,24 +1,24 @@
 require 'spec_helper'
 
 def collect_data size, &block
-  size.times.inject([]) {|data| data << block.call }
+  size.times.inject([]) { |data, _| data << block.call }
 end
 
 module Codebreaker
   describe Secret do
     let(:secret) { Secret.new }
-    describe "#get" do
-      it "returns a String" do
+    describe '#get' do
+      it 'returns a String' do
         expect(secret.get).to be_a String
       end
-      it "returns a code with size of 4" do
+      it 'returns a code with size of 4' do
         expect(secret.get.length).to eq 4
       end
-      it "returns a code with digits 1 - 6 only" do
+      it 'returns a code with digits 1 - 6 only' do
         10.times { expect(secret.get).to match(/^[1-6]+$/) }
       end
 
-      context "has good statistics", statistic_test: true do
+      context 'has good statistics', statistic_test: true do
         require 'descriptive_statistics'
           secret = Secret.new
           4.times do |digit|
