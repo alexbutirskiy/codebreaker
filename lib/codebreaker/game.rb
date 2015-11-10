@@ -24,15 +24,10 @@ module Codebreaker
       check_input arg
       input = arg.dup
       secret_copy = @secret.dup
-      response = ''
-      4.times do |i|
-        next if input[i] != secret_copy[i]
-        response += '+'
-        input[i] = '+'
-        secret_copy[i] = ' '
-      end
-      secret_copy.each_char { |number| input.sub!(number, '-') }
-      response += '-' * input.count('-')
+
+      response = check_exact_match(input, secret_copy)
+      response += check_close_match(input, secret_copy)
+
       @win = true if response.count('+') == @secret.size
       @lose = true if !win? && @attempts_left == 0
       response
@@ -60,6 +55,22 @@ module Codebreaker
     def check_input(s)
       raise ArgumentError, "wrong input \"#{s}\"" unless s.match(/^[1-6]+$/)
       raise ArgumentError, "wrong input size \"#{s}\"" if s.size != 4
+    end
+
+    def check_exact_match(input, secret_copy)
+      response = ''
+      4.times do |i|
+        next if input[i] != secret_copy[i]
+        response += '+'
+        input[i] = '+'
+        secret_copy[i] = ' '
+      end
+      response
+    end
+
+    def check_close_match(input, secret_copy)
+      secret_copy.each_char { |number| input.sub!(number, '-') }
+      '-' * input.count('-')
     end
   end
 end
