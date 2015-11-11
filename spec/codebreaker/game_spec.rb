@@ -3,7 +3,7 @@ require 'spec_helper'
 module Codebreaker
   shared_context 'predefined games' do
     before(:each) do
-      secret = double('Secret instance', get: '1234')
+      secret = double('Secret instance', get: SECRET)
       allow(Secret).to receive(:new).and_return(secret)
       (@game = Game.new).start
     end
@@ -105,7 +105,7 @@ module Codebreaker
 
       context 'when game is over' do
         it 'returns "Game Over" if player won' do
-          @game.guess('1234')
+          @game.guess(SECRET)
           expect(@game.guess('1111')).to eq 'Game Over'
         end
 
@@ -147,7 +147,7 @@ module Codebreaker
         end
       end
 
-      context 'when there is no hints available', if: !@hint_failed do
+      context 'when there is no hints available' do
         it 'returns \'____\' ' do
           4.times { @game.hint }
           expect(@game.hint).to eq '___'
@@ -159,7 +159,7 @@ module Codebreaker
       include_context 'predefined games'
 
       it 'returns true if secret has been guessed' do
-        @game.guess('1234')
+        @game.guess(SECRET)
         expect(@game).to be_win
       end
 
@@ -179,7 +179,7 @@ module Codebreaker
       end
       
       it 'returns false at other cases' do
-        @game.guess '1234'
+        @game.guess(SECRET)
         @game.attempts_left.times { @game.guess('1111') }
         expect(@game).to_not be_lose
       end
