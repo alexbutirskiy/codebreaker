@@ -13,7 +13,7 @@ module Codebreaker
     SECRET = '1234'
     let(:game) { Game.new }
 
-    describe '::new' do
+    describe '.new' do
       it 'creates new Random Number Generator' do
         expect(Secret).to receive(:new)
         Game.new
@@ -23,22 +23,22 @@ module Codebreaker
     describe '#start' do
 
       it 'takes a string as difficulty level' do
-        game.start('Easy')
-        expect(game.difficulty).to eq 'Easy'
-        game.start('Hard')
-        expect(game.difficulty).to eq 'Hard'
+        game.start(Settings::Difficulty::EASY)
+        expect(game.difficulty).to eq Settings::Difficulty::EASY
+        game.start(Settings::Difficulty::HARD)
+        expect(game.difficulty).to eq Settings::Difficulty::HARD
       end
       
       context 'when no parametres provided' do
         it "sets difficulty level to 'Medium' at first start" do
           game.start
-          expect(game.difficulty).to eq 'Medium'
+          expect(game.difficulty).to eq Settings::Difficulty::MEDIUM
         end
 
         it 'keeps difficulty level from previous game st further starts' do
-          game.start 'Hard'
+          game.start Settings::Difficulty::HARD
           game.start
-          expect(game.difficulty).to eq 'Hard'
+          expect(game.difficulty).to eq Settings::Difficulty::HARD
         end
       end
 
@@ -122,8 +122,8 @@ module Codebreaker
       context 'when there is some hints available' do
         it 'returns string with one digit showed (ex. \'_2__\')' do
           hint_str = @game.hint
-          expect(hint_str.size).to eq 4
-          expect(hint_str.count('_')).to eq 3
+          expect(hint_str.size).to eq Settings::DIGITS_TOTAL
+          expect(hint_str.count('_')).to eq Settings::DIGITS_TOTAL - 1
           expect(hint_str).to match(/[1-6]/)
         end
 
@@ -149,7 +149,7 @@ module Codebreaker
 
       context 'when there is no hints available' do
         it 'returns \'____\' ' do
-          4.times { @game.hint }
+          @game.instance_variable_set(:@hints_left, 0)
           expect(@game.hint).to eq '___'
         end
       end
