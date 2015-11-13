@@ -3,22 +3,26 @@ require 'spec_helper'
 module Codebreaker
   describe Settings do
     describe '::get' do
-      LEVELS =  %w{ Easy Medium Hard Impossible }
+      LEVELS =  %w{ EASY MEDIUM HARD IMPOSSIBLE }
       ATTEMPTS =  [  20,   15,   10,      1     ]
       HINTS =     [   2,    1,    1,      0     ]
 
+      def difficulty_get level
+        Settings::Difficulty.const_get level
+      end
+
       LEVELS.each_with_index do |level, i|
-        context "when takes  \"#{level}\" string as difficulty level" do
+        context "when takes  Settings::Difficulty::#{level} " do
           it 'do not rise error' do
-            expect { Settings.get level }.to_not raise_error
+            expect { Settings.get(difficulty_get level) }.to_not raise_error
           end
 
           it "returns #{ ATTEMPTS[i] } attempts when \"#{level}\" level given" do
-            expect(Settings.get(level)[:attempts]).to eq(ATTEMPTS[i])
+            expect(Settings.get(difficulty_get level)[:attempts]).to eq(ATTEMPTS[i])
           end
 
           it "returns #{ HINTS[i] } hints when \"#{level}\" level given" do
-            expect(Settings.get(level)[:hints]).to eq(HINTS[i])
+            expect(Settings.get(difficulty_get level)[:hints]).to eq(HINTS[i])
           end
         end
       end
