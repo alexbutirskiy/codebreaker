@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 require_relative '../lib/codebreaker/console'
 
-include Console
+c = Console_game.new
 
 inp = ''
 loop do
-  result = console_game(inp)
+  outp = c.play(inp)
+  break unless outp
+  puts outp
   inp = gets.chomp
-  break unless result
 end
