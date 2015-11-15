@@ -20,9 +20,9 @@ module Codebreaker
     end
 
     def guess(arg)
+      raise ArgumentError, "wrong input \"#{arg}\"" unless input_valid?(arg)
       return GAME_OVER if win? || lose?
       @attempts_left -= 1 unless @attempts_left == 0
-      check_input arg
       input = arg.dup
       secret_copy = @secret.dup
 
@@ -51,12 +51,16 @@ module Codebreaker
       @lose || false
     end
 
+    def input_valid? inp
+      !!inp.match(/^[1-6]+$/) && inp.size == Settings::DIGITS_TOTAL
+    end
+
     private
 
-    def check_input(s)
-      raise ArgumentError, "wrong input \"#{s}\"" unless s.match(/^[1-6]+$/)
-      raise ArgumentError, "wrong input size \"#{s}\"" if s.size != Settings::DIGITS_TOTAL
-    end
+    # def check_input(s)
+    #   raise ArgumentError, "wrong input \"#{s}\"" unless s.match(/^[1-6]+$/)
+    #   raise ArgumentError, "wrong input size \"#{s}\"" if s.size != Settings::DIGITS_TOTAL
+    # end
 
     def check_exact_match(input, secret_copy)
       response = ''

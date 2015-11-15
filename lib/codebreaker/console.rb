@@ -1,16 +1,21 @@
 require_relative 'game'
 require 'byebug'
 
-module Command
+module Commands
+  START = 'start'
   HELP = 'help'
   QUIT = 'quit'
   HINT = 'hint'
   SAVE = 'save'
   RESTORE = 'restore'
 
+  def self.include? cmd
+    Commands.constants.map{|a| Commands.const_get a}.include?(cmd)
+  end
+
 end
 
-module State
+module States
   GREETING = 1
   RESTORE = 2
   ASK_DIFFICULTY = 3
@@ -19,7 +24,7 @@ end
 
 class Console_game
   include Codebreaker
-  include State
+  include States
 
   def initialize
     @state = GREETING
@@ -27,21 +32,25 @@ class Console_game
 
   def play inp
     inp.downcase!
-    return command(inp) if Command.constants.map{|a| Command.const_get a}.include?(inp)
+    return command(inp) if Commands.include?(inp)
     'Enter your command'
   end
 
+  private
+
   def command cmd
-    case cmd
-    when Command::HELP
+    return case cmd
+    when Commands::START
+      start
+    when Commands::HELP
       help
-    when Command::QUIT
+    when Commands::QUIT
       nil
-    when Command::HINT
+    when Commands::HINT
       'This is a hint'
-    when Command::SAVE
+    when Commands::SAVE
       'This is a save'
-    when Command::RESTORE
+    when Commands::RESTORE
       'This is a restore'
     else
       raise ArgumentError, "Unknown command cmd"
@@ -50,8 +59,14 @@ class Console_game
 
   def help
 <<-EOL
-        Help
-
+        Help topic
+Comands list:
+  start   - start new game
+  quit    - terminate caurrent game end exit
+  hint    - display a hint
+  save    - save current game to file
+  restore - load game from file and continue 
+EOL
   end
 
     def console_game inp=nil

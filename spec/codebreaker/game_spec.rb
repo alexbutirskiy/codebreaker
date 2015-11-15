@@ -22,7 +22,7 @@ module Codebreaker
 
     describe '#start' do
 
-      it 'takes a string as difficulty level' do
+      it 'takes a string that defines difficulty level' do
         game.start(Settings::Difficulty::EASY)
         expect(game.difficulty).to eq Settings::Difficulty::EASY
         game.start(Settings::Difficulty::HARD)
@@ -30,12 +30,12 @@ module Codebreaker
       end
       
       context 'when no parametres provided' do
-        it "sets difficulty level to 'Medium' at first start" do
+        it "sets 'Medium' difficulty level first" do
           game.start
           expect(game.difficulty).to eq Settings::Difficulty::MEDIUM
         end
 
-        it 'keeps difficulty level from previous game st further starts' do
+        it 'keeps the same difficulty level to next games' do
           game.start Settings::Difficulty::HARD
           game.start
           expect(game.difficulty).to eq Settings::Difficulty::HARD
@@ -49,19 +49,48 @@ module Codebreaker
         game.start
       end
 
+      it 'sets @win to false' do
+        game.instance_variable_set(:@win, true)
+        game.start
+        expect(game).to_not be_win
+      end
+
+      it 'sets @lose to false' do
+        game.instance_variable_set(:@lose, true)
+        game.start
+        expect(game).to_not be_lose
+      end
+
     end
 
     describe '#attempts_left' do
-      it 'returns number of attempts to lose the game' do
+      it 'returns a number of attempts before the game will be lost' do
         game.start
         expect(game.attempts_left).to be_a Fixnum
       end
     end
 
     describe '#hints_left' do
-      it 'returns number of hints to be asked by player' do
+      it 'returns a number of hints the player can ask for' do
         game.start
         expect(game.hints_left).to be_a Fixnum
+      end
+    end
+
+    describe '#input_valid?' do
+      it "returns 'true' when input string is valid" do
+        expect(game.input_valid?(SECRET)).to eq true
+        expect(game.input_valid?('1111')).to eq true
+      end
+
+      it "returns 'false' when input string has wrong characters" do
+        expect(game.input_valid?('123?')).to eq false
+        expect(game.input_valid?('1x23')).to eq false
+      end
+
+      it "returns 'false' when input string has wrong length" do
+        expect(game.input_valid?('12345')).to eq false
+        expect(game.input_valid?('123')).to eq false
       end
     end
 
