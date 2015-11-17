@@ -10,30 +10,45 @@ module Commands
   RESTORE = 'restore'
 
   def self.include? cmd
-    Commands.constants.map{|a| Commands.const_get a}.include?(cmd)
+    Commands.constants.map{ |a| Commands.const_get a }.include?(cmd)
   end
 
 end
 
-module States
-  GREETING = 1
-  RESTORE = 2
-  ASK_DIFFICULTY = 3
-  GAME = 4
-end
+# module States
+#   GREETING = 1
+#   RESTORE = 2
+#   ASK_DIFFICULTY = 3
+#   GAME = 4
+# end
 
 class Console_game
   include Codebreaker
-  include States
+  # include States
+
+  EMPTY_STRING = ''
 
   def initialize
-    @state = GREETING
+    @game = Game.new
   end
 
   def play inp
     inp.downcase!
     return command(inp) if Commands.include?(inp)
-    'Enter your command'
+    return 'Start new game first' if @game.is_finished?
+    unless @game.input_valid?(inp) || inp == EMPTY_STRING
+      return "Wrong input '#{inp}' provided\n Press Enter to continue"
+    end
+
+    answer = codebreaker_display inp
+
+    answer += if @game.win?
+      "\nCongratulation!!! You have won!!!"
+    elsif @game.lose?
+      "\nYou have lost!!! Try again."
+    else
+      ''
+    end
   end
 
   private
@@ -45,21 +60,55 @@ class Console_game
     when Commands::HELP
       help
     when Commands::QUIT
-      nil
+      quit
     when Commands::HINT
-      'This is a hint'
+      hint
     when Commands::SAVE
-      'This is a save'
+      save
     when Commands::RESTORE
-      'This is a restore'
+      restore
     else
       raise ArgumentError, "Unknown command cmd"
     end
   end
 
+  def start
+    @game.start
+    codebreaker_display
+  end
+
+  def codebreaker_display inp = ''
+    codebreaker_answer = if inp != EMPTY_STRING
+      "Your number: '#{inp}'\t Codebreakers answer: '#{@game.guess inp}'"
+    else
+      "\n"
+    end
+
+    game_state = <<-EOL
+                Codebreaker
+Attempts left: #{@game.attempts_left}
+Hints left: #{@game.hints_left}
+EOL
+
+  game_state + codebreaker_answer
+  end
+
+  def hint
+    hint_answer = @game.hint
+    codebreaker_display + "Hint: #{hint_answer}"
+  end
+
+  def save
+    @game.save
+  end
+
+  def restore
+    @game.restore
+  end
+
   def help
 <<-EOL
-        Help topic
+                Help topic
 Comands list:
   start   - start new game
   quit    - terminate caurrent game end exit
@@ -69,50 +118,9 @@ Comands list:
 EOL
   end
 
-    def console_game inp=nil
-      return false if inp.upcase == 'QUIT'
-byebug
-      case @state
-      when GREETING
-        @state = RESTORE
-        return <<-EOL
-Welcome to Codebreaker!
-
-Would you like to start new game or restore saved
-1. Start new game
-2. Restore
-EOL
-      when RESTORE
-        case inp
-        when '1'
-          @state = ASK_DIFFICULTY
-          return <<-EOL  
-Please, select difficulty level
-1. Easy
-2. Medium
-3. High
-4. Impossible
-EOL
-        else
-          return "Wrong input '#{inp}', try again"
-        end
-      when ASK_DIFFICULTY
-        @state = GAME
-        case inp
-        when '1' then @game.start(Settings::Difficulty::EASY)
-        when '2' then @game.start(Settings::Difficulty::MEDIUM)
-        when '3' then @game.start(Settings::Difficulty::HIGH)
-        when '4' then @game.start(Settings::Difficulty::IMPOSSIBLE)
-        else
-          @state = ASK_DIFFICULTY
-          return "Wrong input '#{inp}', try again"
-        end
-        'Enter number:'
-      when GAME
-        @game.guess
-      else
-        ""
-    end
+  def quit
+    nil
   end
+
 end
 

@@ -4,10 +4,12 @@ require_relative 'saver'
 module Codebreaker
   GAME_OVER = 'Game Over'
   class Game
+    include Saver
     attr_reader :difficulty, :attempts_left, :hints_left
 
     def initialize
       @rng = Secret.new
+      start
     end
 
     def start(difficulty = nil)
@@ -51,11 +53,13 @@ module Codebreaker
       @lose || false
     end
 
+    def is_finished?
+      win? || lose?
+    end
+
     def input_valid? inp
       !!inp.match(/^[1-6]+$/) && inp.size == Settings::DIGITS_TOTAL
     end
-
-    private
 
     # def check_input(s)
     #   raise ArgumentError, "wrong input \"#{s}\"" unless s.match(/^[1-6]+$/)

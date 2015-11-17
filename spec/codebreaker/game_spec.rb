@@ -5,7 +5,7 @@ module Codebreaker
     before(:each) do
       secret = double('Secret instance', get: SECRET)
       allow(Secret).to receive(:new).and_return(secret)
-      (@game = Game.new).start
+      @game = Game.new
     end
   end
 
@@ -15,6 +15,8 @@ module Codebreaker
 
     describe '.new' do
       it 'creates new Random Number Generator' do
+        secret = double('Secret instance', get: SECRET)
+        allow(Secret).to receive(:new).and_return(secret)
         expect(Secret).to receive(:new)
         Game.new
       end
@@ -139,7 +141,8 @@ module Codebreaker
         end
 
         it 'returns "Game Over" if player lost' do
-          @game.attempts_left.times { @game.guess('1111') }
+          @game.instance_variable_set(:@attempts_left, 1)
+          @game.guess('1111')
           expect(@game.guess('1111')).to eq 'Game Over'
         end
       end
@@ -193,8 +196,8 @@ module Codebreaker
       end
 
       it 'returns false at other cases' do
-        expect(@game).to_not be_win
-        @game.attempts_left.times { @game.guess('1111') }
+        @game.instance_variable_set(:@attempts_left, 1)
+        @game.guess('1111')
         expect(@game).to_not be_win
       end
     end
@@ -203,14 +206,22 @@ module Codebreaker
       include_context 'predefined games'
 
       it 'returns true if secret has not guessed and no attempts available' do
-        @game.attempts_left.times { @game.guess('1111') }
+        @game.instance_variable_set(:@attempts_left, 1)
+        @game.guess('1111')
         expect(@game).to be_lose
       end
       
       it 'returns false at other cases' do
         @game.guess(SECRET)
-        @game.attempts_left.times { @game.guess('1111') }
+        @game.instance_variable_set(:@attempts_left, 1)
+        @game.guess('1111')
         expect(@game).to_not be_lose
+      end
+    end
+
+    describe '#is_finished?' do
+      it "returns 'false' when game in progress" do
+        expect(@game).to_not be
       end
     end
   end
