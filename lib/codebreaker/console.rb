@@ -59,8 +59,6 @@ class Console_game
       save
     when Commands::RESTORE
       restore
-    else
-      raise ArgumentError, "Unknown command cmd"
     end
   end
 

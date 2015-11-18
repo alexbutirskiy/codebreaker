@@ -43,10 +43,20 @@ describe 'Console' do
       expect(console.play(Commands::HELP)).to match('Help topic')
     end
 
-    include_examples "codebreaker_answer_test", "'#{Commands::START}'' command", ''
 
     it "returns a string with hint when '#{Commands::HINT}' command is given" do
       expect(console.play(Commands::HINT)).to match(HINT_ANSWER)
+    end
+
+    context "when '#{Commands::START}' command is given" do
+      it "calls 'start' method of the 'game' instance" do
+        expect(@game).to receive(:start)
+        console.play(Commands::START)
+      end
+
+      it "returns game state" do
+        expect(console.play(Commands::START)).to match(GAME_STATS_REGEXP);
+      end
     end
 
     context "when '#{Commands::SAVE}' command is given" do

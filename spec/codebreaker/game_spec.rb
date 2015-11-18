@@ -221,7 +221,21 @@ module Codebreaker
 
     describe '#is_finished?' do
       it "returns 'false' when game in progress" do
-        expect(@game).to_not be
+        game.instance_variable_set(:@win, false)
+        game.instance_variable_set(:@lose, false)
+        expect(game.is_finished?).to be false
+      end
+
+      it "returns 'true' when game is won" do
+        game.instance_variable_set(:@win, true)
+        game.instance_variable_set(:@lose, false)
+        expect(game.is_finished?).to be true
+      end
+
+      it "returns 'true' when game is lost" do
+        game.instance_variable_set(:@win, false)
+        game.instance_variable_set(:@lose, true)
+        expect(game.is_finished?).to be true
       end
     end
   end
