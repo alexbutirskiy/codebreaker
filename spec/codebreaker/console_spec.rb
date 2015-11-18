@@ -4,8 +4,10 @@ describe 'Console' do
   GUESS_STRING = '1234'
   GUESS_ANSWER = '-+--'
   HINT_ANSWER = '_2__'
+  WRONG_COMMAND = 'wrong_command'
   SAVE_GAME_ANSWER = 'Game saved'
   GAME_STATS_REGEXP = /Codebreaker.*Attempts left:.*Hints left:/m
+  WRONG_INPUT_REGEXP = /Wrong input.*#{WRONG_COMMAND}/
 
   let(:console) { Console_game.new }
 
@@ -33,6 +35,11 @@ describe 'Console' do
   describe '#play' do
     it 'takes a string as argument' do
       expect { console.play('') }.to_not raise_error
+    end
+
+    it "returns 'Wrong input' when wrong command entered" do
+      allow(@game).to receive(:input_valid?).and_return(false)
+      expect(console.play(WRONG_COMMAND)).to match(WRONG_INPUT_REGEXP)
     end
 
     it "returns nil when '#{Commands::QUIT}' command is given" do
