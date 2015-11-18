@@ -14,7 +14,6 @@ module Codebreaker
 
       f.write inst_state.to_yaml
       f.close
-
     end
 
     def restore arg = nil

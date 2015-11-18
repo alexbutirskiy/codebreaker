@@ -15,16 +15,8 @@ module Commands
 
 end
 
-# module States
-#   GREETING = 1
-#   RESTORE = 2
-#   ASK_DIFFICULTY = 3
-#   GAME = 4
-# end
-
 class Console_game
   include Codebreaker
-  # include States
 
   EMPTY_STRING = ''
 
@@ -37,7 +29,7 @@ class Console_game
     return command(inp) if Commands.include?(inp)
     return 'Start new game first' if @game.is_finished?
     unless @game.input_valid?(inp) || inp == EMPTY_STRING
-      return "Wrong input '#{inp}' provided\n Press Enter to continue"
+      return "Wrong input '#{inp}' provided\nPress Enter to continue"
     end
 
     answer = codebreaker_display inp
@@ -100,10 +92,12 @@ EOL
 
   def save
     @game.save
+    "Game saved\nPress enter to continue"
   end
 
   def restore
     @game.restore
+    codebreaker_display
   end
 
   def help
