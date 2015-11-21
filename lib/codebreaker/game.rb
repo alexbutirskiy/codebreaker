@@ -62,8 +62,7 @@ module Codebreaker
     end
 
     def save(arg = nil, **options)
-      options[:except] ||= []
-      options[:except] += [:rng]
+      options[:except] = Array(options[:except]) + [:rng]
       super(arg, options)
     end
 
