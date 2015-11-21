@@ -61,10 +61,13 @@ module Codebreaker
       !!inp.match(/^[1-6]+$/) && inp.size == Settings::DIGITS_TOTAL
     end
 
-    # def check_input(s)
-    #   raise ArgumentError, "wrong input \"#{s}\"" unless s.match(/^[1-6]+$/)
-    #   raise ArgumentError, "wrong input size \"#{s}\"" if s.size != Settings::DIGITS_TOTAL
-    # end
+    def save(arg = nil, **options)
+      options[:except] ||= []
+      options[:except] += [:rng]
+      super(arg, options)
+    end
+
+    private
 
     def check_exact_match(input, secret_copy)
       response = ''
